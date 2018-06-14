@@ -5,32 +5,31 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
+
+import static org.cn.wzy.util.PropertiesUtil.IntegerValue;
+import static org.cn.wzy.util.PropertiesUtil.StringValue;
 
 /**
  * @author wzy
  * @Date 2018/4/6 14:00
  */
 public class TokenUtil {
-    private static final Properties properties = new Properties();
-    private static final ResourceBundle resource = ResourceBundle.getBundle("database");
-
-    public static Object getValue(String key) {
-        return resource.getString(key);
-    }
 
     public static String tokens(Map<String, Object> claims) {
-        String SecretKey = (String) getValue("secretKey");
+        String SecretKey =  StringValue("secretKey");
         //获取当前的时间
         Calendar calendar = Calendar.getInstance();
         Date date = new Date(System.currentTimeMillis());
         calendar.setTime(date);
         //向后退后的秒数
-        int time = Integer.parseInt((String) getValue("millisecond"));
+        int time = IntegerValue("millisecond");
         calendar.add(Calendar.MILLISECOND, time);
         Date endTime = calendar.getTime();
-        String issuer = (String) getValue("JWT_ISSUER");
-        String aud = (String) getValue("JWT_AUD");
+        String issuer = StringValue("JWT_ISSUER");
+        String aud = StringValue("JWT_AUD");
         JwtBuilder builder = Jwts.builder().setClaims(claims)
                 .signWith(SignatureAlgorithm.HS256, SecretKey)
                 .setClaims(claims)
@@ -49,7 +48,7 @@ public class TokenUtil {
      * @return
      */
     private static Claims parseJWT(String jsonWebToken) {
-        String secretKey = (String) getValue("secretKey");
+        String secretKey = StringValue("secretKey");
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(secretKey)
