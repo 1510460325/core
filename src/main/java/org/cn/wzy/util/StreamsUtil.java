@@ -21,13 +21,7 @@ import java.util.List;
  * 不短不长八字刚好
  */
 public class StreamsUtil {
-    /**
-     * 输入输出读写
-     * @param inputStream
-     * @param outputStream
-     * @param close 是否关闭输入输出流
-     * @throws IOException
-     */
+
     public static final void write(InputStream inputStream, OutputStream outputStream, boolean close) throws IOException {
         byte[] by = new byte[1024];
         int n;
@@ -40,13 +34,7 @@ public class StreamsUtil {
         }
     }
 
-    /**
-     * 解析文件上传的所有文件
-     * @param request
-     * @param tempPath 临时缓冲目录
-     * @return
-     * @throws FileUploadException
-     */
+
     public static final List<FileItem> getFileList(HttpServletRequest request, String tempPath) throws FileUploadException {
         File tmpFile = new File(tempPath);
         if (!tmpFile.exists()) {
@@ -62,13 +50,7 @@ public class StreamsUtil {
         return upload.parseRequest(request);
     }
 
-    /**
-     * 向HttpServletResponse中输出文件
-     * @param fileName
-     * @param inputStream
-     * @param response
-     * @throws IOException
-     */
+
     public static final void download(String fileName,InputStream inputStream,HttpServletResponse response) throws IOException {
         response.setContentType("application/x-msdownload");
         response.setHeader("Content-Disposition","attachment;filename=" + "\"" + new Date().getTime() + fileName +  "\"");

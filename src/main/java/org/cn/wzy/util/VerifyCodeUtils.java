@@ -34,23 +34,11 @@ public class VerifyCodeUtils {
     private static Random random = new Random();
 
 
-    /**
-     * 使用系统默认字符源生成验证码
-     *
-     * @param verifySize 验证码长度
-     * @return
-     */
     public static String generateVerifyCode(int verifySize) {
         return generateVerifyCode(verifySize, VERIFY_CODES);
     }
 
-    /**
-     * 使用指定源生成验证码
-     *
-     * @param verifySize 验证码长度
-     * @param sources    验证码字符源
-     * @return
-     */
+
     public static String generateVerifyCode(int verifySize, String sources) {
         if (sources == null || sources.length() == 0) {
             sources = VERIFY_CODES;
@@ -64,15 +52,6 @@ public class VerifyCodeUtils {
         return verifyCode.toString();
     }
 
-    /**
-     * 输出指定验证码图片流
-     *
-     * @param w
-     * @param h
-     * @param os
-     * @param code
-     * @throws IOException
-     */
     public static void outputImage(int w, int h, OutputStream os, String code) throws IOException {
         int verifySize = code.length();
         BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
@@ -216,15 +195,7 @@ public class VerifyCodeUtils {
 
     }
 
-    /**
-     * 获取随机验证码及其加密图片
-     *
-     * @param w
-     * @param h
-     * @param size
-     * @return
-     * @throws IOException
-     */
+
     public static ImgResult VerifyCode(int w, int h, int size) throws IOException {
         BASE64Encoder encoder = new BASE64Encoder();
         ImgResult rs = new ImgResult();

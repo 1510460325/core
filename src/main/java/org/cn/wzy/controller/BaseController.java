@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * @author wzy
- * @Date 2018/4/10 13:49
- */
+
 @Log4j
 public class BaseController {
     protected static final ThreadLocal<HttpServletRequest> requests = new ThreadLocal();

@@ -5,10 +5,6 @@ import org.cn.wzy.query.BaseQuery;
 
 import java.util.List;
 
-/**
- * @author wzy
- * @Date 2018/4/7 15:49
- */
 public interface BaseDao<Q> {
     String getNameSpace();
 

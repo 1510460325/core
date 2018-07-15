@@ -9,10 +9,6 @@ import org.mybatis.spring.support.SqlSessionDaoSupport;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author wzy
- * @Date 2018/4/7 15:55
- */
 @Log4j
 public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements BaseDao<Q> {
 

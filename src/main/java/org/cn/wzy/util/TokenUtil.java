@@ -12,10 +12,7 @@ import java.util.Map;
 import static org.cn.wzy.util.PropertiesUtil.IntegerValue;
 import static org.cn.wzy.util.PropertiesUtil.StringValue;
 
-/**
- * @author wzy
- * @Date 2018/4/6 14:00
- */
+
 public class TokenUtil {
 
     public static String tokens(Map<String, Object> claims) {
@@ -41,12 +38,7 @@ public class TokenUtil {
         return builder.compact();
     }
 
-    /**
-     * 从jwt中获取用户信息集合
-     *
-     * @param jsonWebToken
-     * @return
-     */
+
     private static Claims parseJWT(String jsonWebToken) {
         String secretKey = StringValue("secretKey");
         try {
@@ -59,13 +51,7 @@ public class TokenUtil {
         }
     }
 
-    /**
-     * 通过key从jwt中获取信息
-     *
-     * @param token
-     * @param key
-     * @return
-     */
+
     public static Object tokenValueOf(String token, String key) {
         Claims claims = parseJWT(token);
         if (claims == null || claims.get(key) == null)

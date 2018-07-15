@@ -3,10 +3,7 @@ package org.cn.wzy.query;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-/**
- * @author wzy
- * @Date 2018/4/7 13:14
- */
+
 @Setter
 @Getter
 @NoArgsConstructor

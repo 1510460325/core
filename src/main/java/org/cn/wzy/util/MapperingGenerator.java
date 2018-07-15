@@ -11,11 +11,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author wzy
- * @Date 2018/4/5 20:52
- */
-
 @Setter
 public class MapperingGenerator {
     public static String oldPath;
@@ -235,11 +230,6 @@ public class MapperingGenerator {
         return false;
     }
 
-    /**
-     * 获取根文件
-     * @param filePath
-     * @return
-     */
     public static Element readXml(String filePath) {
         InputStream in = null;
         Element rootElement = null;
@@ -261,11 +251,6 @@ public class MapperingGenerator {
         }
         return rootElement;
     }
-    /**
-     * 获取所有的字段信息
-     * @param rootElement
-     * @return
-     */
     public static Model getModel(Element rootElement) {
         Model model = new Model();
         model.setNamespace(rootElement.attributeValue("namespace"));
