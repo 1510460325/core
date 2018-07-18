@@ -21,23 +21,13 @@ import java.util.Random;
  */
 public class VerifyCodeUtils {
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ImgResult {
-        String img;
-        String code;
-    }
-
     //使用到Algerian字体，系统里没有的话需要安装字体，字体只显示大写，去掉了1,0,i,o几个容易混淆的字符
     public static final String VERIFY_CODES = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
     private static Random random = new Random();
 
-
     public static String generateVerifyCode(int verifySize) {
         return generateVerifyCode(verifySize, VERIFY_CODES);
     }
-
 
     public static String generateVerifyCode(int verifySize, String sources) {
         if (sources == null || sources.length() == 0) {
@@ -195,7 +185,6 @@ public class VerifyCodeUtils {
 
     }
 
-
     public static ImgResult VerifyCode(int w, int h, int size) throws IOException {
         BASE64Encoder encoder = new BASE64Encoder();
         ImgResult rs = new ImgResult();
@@ -205,5 +194,13 @@ public class VerifyCodeUtils {
         outputImage(w, h, data, code);
         rs.setImg(encoder.encode(data.toByteArray()));
         return rs;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ImgResult {
+        String img;
+        String code;
     }
 }

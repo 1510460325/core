@@ -16,7 +16,7 @@ import static org.cn.wzy.util.PropertiesUtil.StringValue;
 public class TokenUtil {
 
     public static String tokens(Map<String, Object> claims) {
-        String SecretKey =  StringValue("secretKey");
+        String SecretKey = StringValue("secretKey");
         //获取当前的时间
         Calendar calendar = Calendar.getInstance();
         Date date = new Date(System.currentTimeMillis());
@@ -39,7 +39,7 @@ public class TokenUtil {
     }
 
 
-    private static Claims parseJWT(String jsonWebToken) {
+    private static Claims absParse(String jsonWebToken) {
         String secretKey = StringValue("secretKey");
         try {
             Claims claims = Jwts.parser()
@@ -53,9 +53,17 @@ public class TokenUtil {
 
 
     public static Object tokenValueOf(String token, String key) {
-        Claims claims = parseJWT(token);
+        Claims claims = absParse(token);
         if (claims == null || claims.get(key) == null)
             return null;
         return claims.get(key);
+    }
+
+    public static Claims parse(String jwt) {
+        String secretKey = StringValue("secretKey");
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(jwt).getBody();
+        return claims;
     }
 }

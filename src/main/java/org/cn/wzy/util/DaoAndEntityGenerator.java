@@ -1,8 +1,10 @@
 package org.cn.wzy.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
-import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -14,6 +16,7 @@ public class DaoAndEntityGenerator {
     public static String entityPath;
     public static String packagePath;
     public static String packageName;
+
     public static void entityGenerator() throws IOException {
         File file = new File(entityPath);
         if (!file.isDirectory()) {
@@ -35,7 +38,7 @@ public class DaoAndEntityGenerator {
                 continue;
             }
             tem.createNewFile();
-            print(f,tem);
+            print(f, tem);
         }
     }
 
@@ -48,16 +51,15 @@ public class DaoAndEntityGenerator {
                 if (line.indexOf("public class") != -1) {
                     printWriter.print("import lombok.*;\n" +
                             "import lombok.experimental.Accessors;\n\n" +
-                             "/**\n" +
-                             " * Create by WzyGenerator\n" +
-                             " * on " + new Date() + "\n" + " * 不短不长八字刚好\n" +
-                             " */\n\n" +
+                            "/**\n" +
+                            " * Create by WzyGenerator\n" +
+                            " * on " + new Date() + "\n" + " * 不短不长八字刚好\n" +
+                            " */\n\n" +
                             "@Data\n" +
                             "@AllArgsConstructor\n" +
                             "@NoArgsConstructor\n" +
                             "@Accessors(chain = true)\n");
-                }
-                else {
+                } else {
                     System.out.println("........\ngenerate the " + dist.getName() + " is completed.\n\n\n");
                     printWriter.print("}");
                     break;
@@ -80,7 +82,7 @@ public class DaoAndEntityGenerator {
             System.out.println("mkdir " + impl.getName());
             impl.mkdir();
         }
-        File file = new File(packagePath+ "\\entity");
+        File file = new File(packagePath + "\\entity");
         if (!file.exists() || file.listFiles() == null || file.listFiles().length == 0) {
             System.out.println(file + " is null or empty!");
             return;
@@ -88,9 +90,9 @@ public class DaoAndEntityGenerator {
         File[] files = file.listFiles();
         File one = files[0];
         Scanner scanner = new Scanner(one);
-        packageName = scanner.nextLine().replaceAll("entity","dao");
+        packageName = scanner.nextLine().replaceAll("entity", "dao");
         for (File f : files) {
-            String daoName = f.getName().replaceAll(".java","Dao.java");
+            String daoName = f.getName().replaceAll(".java", "Dao.java");
             System.out.println("generate the " + daoName);
             File tem = new File(dao + "\\" + daoName);
             if (tem.exists()) {
@@ -99,7 +101,7 @@ public class DaoAndEntityGenerator {
             }
             tem.createNewFile();
 
-            String implName = f.getName().replaceAll(".java","DaoImpl.java");
+            String implName = f.getName().replaceAll(".java", "DaoImpl.java");
             System.out.println("generate the " + implName);
             File impltem = new File(impl + "\\" + implName);
             if (impltem.exists()) {
@@ -108,15 +110,16 @@ public class DaoAndEntityGenerator {
             }
             impltem.createNewFile();
 
-            printDao(tem,packageName.replaceAll(".dao;",".entity"),f.getName().replaceAll(".java",""));
-            printImpl(impltem,packageName.replaceAll(".dao;","."),f.getName().replaceAll(".java",""));
+            printDao(tem, packageName.replaceAll(".dao;", ".entity"), f.getName().replaceAll(".java", ""));
+            printImpl(impltem, packageName.replaceAll(".dao;", "."), f.getName().replaceAll(".java", ""));
         }
     }
-    private static void printImpl(File file,String packagePreName, String entity) throws FileNotFoundException {
+
+    private static void printImpl(File file, String packagePreName, String entity) throws FileNotFoundException {
         PrintWriter printWriter = new PrintWriter(file);
-        printWriter.print(packageName.replaceAll("dao","dao.impl") + "\n");
-        printWriter.print(packagePreName.replaceAll("package","import") + "entity." + entity + ";\n");
-        printWriter.print(packagePreName.replaceAll("package","import") + "dao." + entity + "Dao;\n");
+        printWriter.print(packageName.replaceAll("dao", "dao.impl") + "\n");
+        printWriter.print(packagePreName.replaceAll("package", "import") + "entity." + entity + ";\n");
+        printWriter.print(packagePreName.replaceAll("package", "import") + "dao." + entity + "Dao;\n");
         printWriter.print("");
         printWriter.print("import org.cn.wzy.dao.impl.BaseDaoImpl;\n" +
                 "import org.springframework.stereotype.Repository;\n");
@@ -129,20 +132,21 @@ public class DaoAndEntityGenerator {
                 "public class " + entity +
                 "DaoImpl" +
                 " extends BaseDaoImpl<" + entity + "> " +
-                "implements " + entity +  "Dao" +
+                "implements " + entity + "Dao" +
                 " {\n");
         printWriter.print("    @Override\n" +
                 "    public String getNameSpace() {\n" +
                 "        return " + "\"" +
-                packagePreName.replaceAll("package ","") + "dao." + entity + "Mapper" + "\"" +
+                packagePreName.replaceAll("package ", "") + "dao." + entity + "Mapper" + "\"" +
                 ";\n" +
                 "    }\n}");
         printWriter.close();
     }
-    private static void printDao(File file,String packagePreName, String entity) throws FileNotFoundException {
+
+    private static void printDao(File file, String packagePreName, String entity) throws FileNotFoundException {
         PrintWriter printWriter = new PrintWriter(file);
         printWriter.print(packageName + "\n");
-        printWriter.print(packagePreName.replaceAll("package","import") + "." + entity + ";\n");
+        printWriter.print(packagePreName.replaceAll("package", "import") + "." + entity + ";\n");
         printWriter.print("import org.cn.wzy.dao.BaseDao;\n");
         printWriter.print("/**\n" +
                 " * Create by WzyGenerator\n" +

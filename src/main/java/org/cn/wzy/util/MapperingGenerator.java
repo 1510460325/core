@@ -17,27 +17,6 @@ public class MapperingGenerator {
     public static String implPath;
     public static String sql;
 
-    @Setter
-    @Getter
-    private static class Field {
-        private String column;
-        private String property;
-        private String jdbcType;
-    }
-
-    @Getter
-    @Setter
-    private static class Model {
-        private String namespace;
-        private String tableName;
-        private String type;
-        private String idColumn;
-        private String idProperty;
-        private String idJdbcType;
-        private List<Field> fieldList = new ArrayList<>();
-        private boolean isBlob = false;
-        private List<Field> blobFieldList = new ArrayList<>();
-    }
     public static void run() {
         File oldPathFile = new File(oldPath);
         File[] files = oldPathFile.listFiles();
@@ -62,7 +41,7 @@ public class MapperingGenerator {
     }
 
     public static void writeImpl(Model model, String filename) {
-        File file = new File(implPath + "/" +filename);
+        File file = new File(implPath + "/" + filename);
         PrintWriter print = null;
         try {
             print = new PrintWriter(file);
@@ -72,16 +51,16 @@ public class MapperingGenerator {
         String resultMap = model.isBlob() ? "ResultMapWithBLOBs" : "BaseResultMap";
         print.printf("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
                 "<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\" >\n" +
-                "<mapper namespace=\"%s\" > \n",model.getNamespace());
+                "<mapper namespace=\"%s\" > \n", model.getNamespace());
         //生成selectBYCondition语句
-        print.printf("  <select id=\"selectByCondition\" parameterType=\"org.cn.wzy.query.BaseQuery\" resultMap=\"%s\"> \n",resultMap);
+        print.printf("  <select id=\"selectByCondition\" parameterType=\"org.cn.wzy.query.BaseQuery\" resultMap=\"%s\"> \n", resultMap);
         print.printf("      SELECT\n");
         print.printf("      <include refid=\"Base_Column_List\"/>\n");
         if (model.isBlob()) {
             print.printf("      ,\n");
             print.printf("      <include refid=\"Blob_Column_List\"/>\n");
         }
-        print.printf("      FROM %s\n",model.getTableName());
+        print.printf("      FROM %s\n", model.getTableName());
         print.printf("      <include refid=\"condition\"/>\n");
         print.printf("      <include refid=\"order\" />\n");
         print.printf("      <include refid=\"limit\" />\n");
@@ -90,36 +69,36 @@ public class MapperingGenerator {
         print.printf("  <select id=\"selectCountByCondition\" parameterType=\"org.cn.wzy.query.BaseQuery\" resultType=\"java.lang.Integer\"> \n");
         print.printf("      SELECT\n");
         print.printf("      COUNT(*)\n");
-        print.printf("      FROM %s\n",model.getTableName());
+        print.printf("      FROM %s\n", model.getTableName());
         print.printf("      <include refid=\"condition\"/>\n");
         print.printf("  </select>\n");
         //插入一个List<Q>集合
         print.printf("  <insert id=\"insertList\" parameterType=\"java.util.List\" useGeneratedKeys=\"false\">\n");
         print.printf("      <foreach collection=\"list\" item=\"item\" index=\"index\" separator=\";\" >\n");
-        print.printf("      INSERT into %s\n",model.getTableName());
-        printColumns(print,model);
+        print.printf("      INSERT into %s\n", model.getTableName());
+        printColumns(print, model);
         print.printf("      VALUES\n");
-        printValues(print,model);
+        printValues(print, model);
         print.printf("      </foreach>\n");
         print.printf("  </insert>\n");
         //删除一个ids集合
         print.printf("  <delete id=\"deleteByIdsList\" parameterType=\"java.util.List\">\n");
-        print.printf("      DELETE FROM %s\n",model.getTableName());
-        print.printf("      WHERE %s IN\n",model.getIdColumn());
+        print.printf("      DELETE FROM %s\n", model.getTableName());
+        print.printf("      WHERE %s IN\n", model.getIdColumn());
         print.printf("      <foreach collection=\"list\" item=\"item\" index=\"index\" open=\"(\" close=\")\" separator=\",\">\n");
         print.printf("          #{item}\n");
         print.printf("      </foreach>\n");
         print.printf("  </delete>\n");
         //生成selectByIds语句
-        print.printf("  <select id=\"selectByIds\" parameterType=\"java.util.List\" resultMap=\"%s\"> \n",resultMap);
+        print.printf("  <select id=\"selectByIds\" parameterType=\"java.util.List\" resultMap=\"%s\"> \n", resultMap);
         print.printf("      SELECT\n");
         print.printf("      <include refid=\"Base_Column_List\"/>\n");
         if (model.isBlob()) {
             print.printf("      ,\n");
             print.printf("      <include refid=\"Blob_Column_List\"/>\n");
         }
-        print.printf("      FROM %s\n",model.getTableName());
-        print.printf("      WHERE %s In\n",model.getIdColumn());
+        print.printf("      FROM %s\n", model.getTableName());
+        print.printf("      WHERE %s In\n", model.getIdColumn());
         print.printf("      <foreach collection=\"list\" item=\"item\" index=\"index\" open=\"(\" close=\")\" separator=\",\">\n");
         print.printf("          #{item}\n");
         print.printf("      </foreach>\n");
@@ -132,7 +111,7 @@ public class MapperingGenerator {
     public static void printColumns(PrintWriter print, Model model) {
         print.printf("      (");
         for (int i = 0; i < model.getFieldList().size(); ++i) {
-            print.printf("%s",model.getFieldList().get(i).getColumn());
+            print.printf("%s", model.getFieldList().get(i).getColumn());
             if (i == model.getFieldList().size() - 1)
                 break;
             print.printf(",");
@@ -140,7 +119,7 @@ public class MapperingGenerator {
         if (model.isBlob()) {
             print.printf(",");
             for (int i = 0; i < model.getBlobFieldList().size(); ++i) {
-                print.printf("%s",model.getBlobFieldList().get(i).getColumn());
+                print.printf("%s", model.getBlobFieldList().get(i).getColumn());
                 if (i == model.getBlobFieldList().size() - 1)
                     break;
                 print.printf(",");
@@ -152,7 +131,7 @@ public class MapperingGenerator {
     public static void printValues(PrintWriter print, Model model) {
         print.printf("      (");
         for (int i = 0; i < model.getFieldList().size(); ++i) {
-            print.printf("#{item.%s,jdbcType=%s}",model.getFieldList().get(i).getProperty(),model.getFieldList().get(i).getJdbcType());
+            print.printf("#{item.%s,jdbcType=%s}", model.getFieldList().get(i).getProperty(), model.getFieldList().get(i).getJdbcType());
             if (i == model.getFieldList().size() - 1)
                 break;
             print.printf(",");
@@ -160,7 +139,7 @@ public class MapperingGenerator {
         if (model.isBlob()) {
             print.printf(",");
             for (int i = 0; i < model.getBlobFieldList().size(); ++i) {
-                print.printf("#{item.%s,jdbcType=%s}",model.getBlobFieldList().get(i).getProperty(),model.getBlobFieldList().get(i).getJdbcType());
+                print.printf("#{item.%s,jdbcType=%s}", model.getBlobFieldList().get(i).getProperty(), model.getBlobFieldList().get(i).getJdbcType());
                 if (i == model.getBlobFieldList().size() - 1)
                     break;
                 print.printf(",");
@@ -169,8 +148,8 @@ public class MapperingGenerator {
         print.printf(")\n");
     }
 
-    public static void writeCondition(Model model,String fileName) {
-        File file = new File(sql + "/" +fileName);
+    public static void writeCondition(Model model, String fileName) {
+        File file = new File(sql + "/" + fileName);
         PrintWriter print = null;
         try {
             print = new PrintWriter(file);
@@ -179,9 +158,9 @@ public class MapperingGenerator {
         }
         print.printf("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
                 "<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\" >\n" +
-                "<mapper namespace=\"%s\" > \n",model.getNamespace());
+                "<mapper namespace=\"%s\" > \n", model.getNamespace());
         print.printf("  <sql id=\"condition\" >\n");
-        printFields(print,model);
+        printFields(print, model);
         print.printf("  </sql>\n");
         print.printf("  <sql id=\"order\" >\n\n");
         print.printf("  </sql>\n");
@@ -199,19 +178,19 @@ public class MapperingGenerator {
     private static void printFields(PrintWriter print, Model model) {
         print.printf("      WHERE 1 = 1 \n");
         for (Field field : model.getFieldList()) {
-            print.printf("      <if test=\"query.%s != null\" >\n",field.getProperty());
-            print.printf("          AND %s = #{query.%s,jdbcType=%s}\n",field.getColumn(),field.getProperty(),field.getJdbcType());
+            print.printf("      <if test=\"query.%s != null\" >\n", field.getProperty());
+            print.printf("          AND %s = #{query.%s,jdbcType=%s}\n", field.getColumn(), field.getProperty(), field.getJdbcType());
             print.printf("      </if>\n");
         }
         if (model.isBlob()) {
             for (Field field : model.getBlobFieldList()) {
-                print.printf("      <if test=\"query.%s != null\" >\n",field.getProperty());
-                print.printf("          AND %s = #{query.%s,jdbcType=%s}\n",field.getColumn(),field.getProperty(),field.getJdbcType());
+                print.printf("      <if test=\"query.%s != null\" >\n", field.getProperty());
+                print.printf("          AND %s = #{query.%s,jdbcType=%s}\n", field.getColumn(), field.getProperty(), field.getJdbcType());
                 print.printf("      </if>\n");
             }
         }
-        print.printf("      <if test=\"query.%s != null\" >\n",model.getIdProperty());
-        print.printf("          AND %s = #{query.%s,jdbcType=%s}\n",model.getIdColumn(),model.getIdProperty(),model.getIdJdbcType());
+        print.printf("      <if test=\"query.%s != null\" >\n", model.getIdProperty());
+        print.printf("          AND %s = #{query.%s,jdbcType=%s}\n", model.getIdColumn(), model.getIdProperty(), model.getIdJdbcType());
         print.printf("      </if>\n");
     }
 
@@ -251,6 +230,7 @@ public class MapperingGenerator {
         }
         return rootElement;
     }
+
     public static Model getModel(Element rootElement) {
         Model model = new Model();
         model.setNamespace(rootElement.attributeValue("namespace"));
@@ -275,6 +255,7 @@ public class MapperingGenerator {
         model.setTableName(result);
         return model;
     }
+
     public static List<Field> getField(Element rootElement) {
         List<Field> fieldList = new ArrayList<>();
         List<Element> elementList = rootElement.elements("result");
@@ -286,5 +267,27 @@ public class MapperingGenerator {
             fieldList.add(field);
         }
         return fieldList;
+    }
+
+    @Setter
+    @Getter
+    private static class Field {
+        private String column;
+        private String property;
+        private String jdbcType;
+    }
+
+    @Getter
+    @Setter
+    private static class Model {
+        private String namespace;
+        private String tableName;
+        private String type;
+        private String idColumn;
+        private String idProperty;
+        private String idJdbcType;
+        private List<Field> fieldList = new ArrayList<>();
+        private boolean isBlob = false;
+        private List<Field> blobFieldList = new ArrayList<>();
     }
 }

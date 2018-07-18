@@ -1,5 +1,6 @@
 package org.cn.wzy.controller;
 
+import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -32,5 +33,21 @@ public class BaseController {
 
     public String getRemoteAddr() {
         return getRequest().getRemoteAddr();
+    }
+
+    public void save(String key, Object value) {
+        getRequest().setAttribute(key, value);
+    }
+
+    public Object ValueOfClaims(String key) {
+        Claims claims = (Claims) getRequest().getAttribute("claims");
+        if (claims == null || claims.get(key) == null)
+            return null;
+        else
+            return claims.get(key);
+    }
+
+    public Object getValue(String key) {
+        return getRequest().getAttribute(key);
     }
 }

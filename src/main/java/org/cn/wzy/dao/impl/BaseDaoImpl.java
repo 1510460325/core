@@ -26,7 +26,7 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
         if (record == null)
             return -1;
         return this.getSqlSession()
-                .insert(getNameSpace() + ".insert",record);
+                .insert(getNameSpace() + ".insert", record);
     }
 
     @Override
@@ -35,9 +35,9 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
             return -1;
         try {
             return this.getSqlSession()
-                    .insert(getNameSpace() + ".insertSelective",record);
+                    .insert(getNameSpace() + ".insertSelective", record);
         } catch (Exception e) {
-            log.error(new Date()+ "--insertSelective--param:" + record + " failed");
+            log.error(new Date() + "--insertSelective--param:" + record + " failed");
         }
         return -1;
     }
@@ -46,7 +46,7 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
     public Q selectByPrimaryKey(Integer id) {
         if (id == null)
             return null;
-        return this.getSqlSession().selectOne(getNameSpace() + ".selectByPrimaryKey",id);
+        return this.getSqlSession().selectOne(getNameSpace() + ".selectByPrimaryKey", id);
     }
 
     @Override
@@ -55,9 +55,9 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
             return -1;
         try {
             return this.getSqlSession()
-                    .update(getNameSpace() + ".updateByPrimaryKeySelective",record);
+                    .update(getNameSpace() + ".updateByPrimaryKeySelective", record);
         } catch (Exception e) {
-            log.error(new Date()+ "--updateByPrimaryKeySelective--param:" + record + " failed");
+            log.error(new Date() + "--updateByPrimaryKeySelective--param:" + record + " failed");
         }
         return -1;
     }
@@ -67,14 +67,14 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
         if (record == null)
             return -1;
         return this.getSqlSession()
-                .update(getNameSpace() + ".updateByPrimaryKeyWithBLOBs",record);
+                .update(getNameSpace() + ".updateByPrimaryKeyWithBLOBs", record);
     }
 
     @Override
     public int updateByPrimaryKey(Q record) {
         if (record == null)
             return -1;
-        return this.getSqlSession().update(getNameSpace() + ".updateByPrimaryKey",record);
+        return this.getSqlSession().update(getNameSpace() + ".updateByPrimaryKey", record);
     }
 
     @Override
@@ -83,9 +83,9 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
             return null;
         try {
             return this.getSqlSession()
-                    .selectList(getNameSpace() + ".selectByCondition",record);
+                    .selectList(getNameSpace() + ".selectByCondition", record);
         } catch (Exception e) {
-            log.error(new Date()+ "--selectByCondition--param:" + record + " failed");
+            log.error(new Date() + "--selectByCondition--param:" + record + " failed");
         }
         return null;
     }
@@ -96,9 +96,9 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
             return -1;
         try {
             return this.getSqlSession()
-                    .selectOne(getNameSpace() + ".selectCountByCondition",record);
+                    .selectOne(getNameSpace() + ".selectCountByCondition", record);
         } catch (Exception e) {
-            log.error(new Date()+ "--selectCountByCondition--param:" + record + " failed");
+            log.error(new Date() + "--selectCountByCondition--param:" + record + " failed");
         }
         return -1;
     }
@@ -110,9 +110,9 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
         SqlSession nowSession = this.getSqlSession();
         try {
             return nowSession
-                    .insert(getNameSpace() + ".insertList",list);
+                    .insert(getNameSpace() + ".insertList", list);
         } catch (Exception e) {
-            log.error(new Date()+ "--insertList--param:" + list + " failed");
+            log.error(new Date() + "--insertList--param:" + list + " failed");
             nowSession.rollback();
         }
         return -1;
@@ -125,9 +125,9 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
         SqlSession nowSession = this.getSqlSession();
         try {
             return this.getSqlSession()
-                    .delete(getNameSpace() + ".deleteByIdsList",ids);
+                    .delete(getNameSpace() + ".deleteByIdsList", ids);
         } catch (Exception e) {
-            log.error(new Date()+ "--insertList--param:" + ids + " failed");
+            log.error(new Date() + "--insertList--param:" + ids + " failed");
             nowSession.rollback();
         }
         return -1;
@@ -139,9 +139,9 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
             return null;
         try {
             return this.getSqlSession()
-                    .selectList(getNameSpace() + ".selectByIds",ids);
+                    .selectList(getNameSpace() + ".selectByIds", ids);
         } catch (Exception e) {
-            log.error(new Date()+ "--selectByIds--param:" + ids + " failed");
+            log.error(new Date() + "--selectByIds--param:" + ids + " failed");
         }
         return null;
     }

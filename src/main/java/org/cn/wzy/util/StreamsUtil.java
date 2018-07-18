@@ -26,7 +26,7 @@ public class StreamsUtil {
         byte[] by = new byte[1024];
         int n;
         while ((n = inputStream.read(by)) != -1) {
-            outputStream.write(by,0,n);
+            outputStream.write(by, 0, n);
         }
         if (close) {
             inputStream.close();
@@ -51,10 +51,10 @@ public class StreamsUtil {
     }
 
 
-    public static final void download(String fileName,InputStream inputStream,HttpServletResponse response) throws IOException {
+    public static final void download(String fileName, InputStream inputStream, HttpServletResponse response) throws IOException {
         response.setContentType("application/x-msdownload");
-        response.setHeader("Content-Disposition","attachment;filename=" + "\"" + new Date().getTime() + fileName +  "\"");
-        ServletOutputStream outputStream  = response.getOutputStream();
-        write(inputStream,outputStream,true);
+        response.setHeader("Content-Disposition", "attachment;filename=" + "\"" + new Date().getTime() + fileName + "\"");
+        ServletOutputStream outputStream = response.getOutputStream();
+        write(inputStream, outputStream, true);
     }
 }
