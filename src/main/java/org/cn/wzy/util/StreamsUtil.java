@@ -4,14 +4,12 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import sun.misc.BASE64Decoder;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +47,40 @@ public class StreamsUtil {
         upload.setSizeMax(PropertiesUtil.LongValue("fileTotalSizeMax"));
         return upload.parseRequest(request);
     }
+
+    public static final boolean download(String path, String fileName, String file) {
+        File parent = new File(path);
+        if (!parent.exists()) {
+            parent.mkdirs();
+        }
+        File target = new File(parent + "/" + fileName);
+        if (!target.exists()) {
+            try {
+                target.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        BASE64Decoder decoder = new BASE64Decoder();
+        try {
+            byte[] b = decoder.decodeBuffer(file);
+            for (int i = 0; i < b.length; ++i) {
+                if (b[i] < 0) {// 调整异常数据
+                    b[i] += 256;
+                }
+            }
+            OutputStream out = new FileOutputStream(target);
+            out.write(b);
+            out.flush();
+            out.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 
     public static final void download(String fileName, InputStream inputStream, HttpServletResponse response) throws IOException {
