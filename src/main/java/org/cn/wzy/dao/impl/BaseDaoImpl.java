@@ -81,6 +81,10 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
     public List<Q> selectByCondition(BaseQuery<Q> record) {
         if (record == null)
             return null;
+        if (record.getStart() != null && record.getRows() != null)
+            record.setStart((record.getStart() - 1) * record.getRows());
+        else
+            record.setStart(null).setRows(null);
         try {
             return this.getSqlSession()
                     .selectList(getNameSpace() + ".selectByCondition", record);
@@ -94,6 +98,10 @@ public abstract class BaseDaoImpl<Q> extends SqlSessionDaoSupport implements Bas
     public Integer selectCountByCondition(BaseQuery<Q> record) {
         if (record == null)
             return -1;
+        if (record.getStart() != null && record.getRows() != null)
+            record.setStart((record.getStart() - 1) * record.getRows());
+        else
+            record.setStart(null).setRows(null);
         try {
             return this.getSqlSession()
                     .selectOne(getNameSpace() + ".selectCountByCondition", record);
