@@ -1,8 +1,6 @@
 package org.cn.wzy.aop;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.*;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.cn.wzy.controller.BaseController;
 import org.cn.wzy.model.ResultModel;
@@ -27,6 +25,12 @@ public class JwtAspect {
         } catch (ExpiredJwtException e) {
             return new ResultModel().builder().code("JWT EXPIRE").build();
         } catch (MalformedJwtException e) {
+            return new ResultModel().builder().code("JWT WRONG").build();
+        } catch (UnsupportedJwtException e) {
+            return new ResultModel().builder().code("JWT WRONG").build();
+        } catch (SignatureException e) {
+            return new ResultModel().builder().code("JWT WRONG").build();
+        } catch (IllegalArgumentException e) {
             return new ResultModel().builder().code("JWT WRONG").build();
         }
         controller.save("claims", claims);

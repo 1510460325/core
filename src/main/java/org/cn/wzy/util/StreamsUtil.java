@@ -82,7 +82,6 @@ public class StreamsUtil {
     }
 
 
-
     public static final void download(String fileName, InputStream inputStream, HttpServletResponse response) throws IOException {
         response.setContentType("application/x-msdownload");
         response.setHeader("Content-Disposition", "attachment;filename=" + "\"" + new Date().getTime() + fileName + "\"");
