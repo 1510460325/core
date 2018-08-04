@@ -46,7 +46,7 @@ public class BaseMongoDao {
         addrs.add(serverAddress);
         MongoCredential credential = MongoCredential.createScramSha1Credential(
                 PropertiesUtil.StringValue("mongo.user")
-                , "admin"
+                , PropertiesUtil.StringValue("mongo.connect")
                 , PropertiesUtil.StringValue("mongo.pwd").toCharArray());
         mongoClient = new MongoClient(addrs, credential, options);
         mongo = mongoClient.getDatabase(PropertiesUtil.StringValue("mongo.db"));
