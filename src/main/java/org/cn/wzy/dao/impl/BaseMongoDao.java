@@ -167,9 +167,9 @@ public class BaseMongoDao {
                 cond.putAll(additional[0]);
             }
             if (onlyOne)
-                thisCollection().deleteOne(new BasicDBObject(MapUtil.parseEntity(record)));
+                thisCollection().deleteOne(cond);
             else
-                thisCollection().deleteMany(new BasicDBObject(MapUtil.parseEntity(record)));
+                thisCollection().deleteMany(cond);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
