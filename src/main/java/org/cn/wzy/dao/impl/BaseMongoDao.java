@@ -32,11 +32,14 @@ public class BaseMongoDao {
 
     static {
         MongoClientOptions options = MongoClientOptions.builder()
-                .connectionsPerHost(150)
-                .maxWaitTime(2000)
-                .socketTimeout(10000)
-                .maxConnectionLifeTime(20000)
-                .connectTimeout(5000).build();
+                .connectionsPerHost(PropertiesUtil.IntegerValue("mongo.connectionsPerHost"))
+                .maxWaitTime(PropertiesUtil.IntegerValue("mongo.maxWaitTime"))
+                .socketTimeout(PropertiesUtil.IntegerValue("mongo.socketTimeout"))
+                .maxConnectionLifeTime(PropertiesUtil.IntegerValue("mongo.maxConnectionLifeTime"))
+                .connectTimeout(PropertiesUtil.IntegerValue("mongo.connectTimeout"))
+                .serverSelectionTimeout(PropertiesUtil.IntegerValue("mongo.serverSelectionTimeout"))
+                .localThreshold(PropertiesUtil.IntegerValue("mongo.localThreshold"))
+                .build();
         ServerAddress serverAddress = new ServerAddress(PropertiesUtil.StringValue("mongo.host"),
                 PropertiesUtil.IntegerValue("mongo.port"));
         List<ServerAddress> addrs = new ArrayList<>();
@@ -106,14 +109,17 @@ public class BaseMongoDao {
         return (int) thisCollection().countDocuments(cond);
     }
 
-    public <Q> boolean insertOne(Q record) {
-        BasicDBObject cond = new BasicDBObject(MapUtil.parseEntity(record));
+    public <Q> boolean insertOne(Q record, Map<String, Object>... additional) {
         try {
             changeCollection(record.getClass());
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             log.info("queryCoditionCount报错:param" + record);
             return false;
+        }
+        BasicDBObject cond = new BasicDBObject(MapUtil.parseEntity(record));
+        if (additional != null && additional.length > 0) {
+            cond.putAll(additional[0]);
         }
         try {
             thisCollection().insertOne(new Document(cond));
@@ -147,7 +153,7 @@ public class BaseMongoDao {
         }
     }
 
-    public <Q> boolean delete(Q record, boolean onlyOne) {
+    public <Q> boolean delete(Q record, boolean onlyOne, Map<String, Object>... additional) {
         try {
             changeCollection(record.getClass());
         } catch (Throwable throwable) {
@@ -156,6 +162,10 @@ public class BaseMongoDao {
             return false;
         }
         try {
+            BasicDBObject cond = new BasicDBObject(MapUtil.parseEntity(record));
+            if (additional != null && additional.length > 0) {
+                cond.putAll(additional[0]);
+            }
             if (onlyOne)
                 thisCollection().deleteOne(new BasicDBObject(MapUtil.parseEntity(record)));
             else
@@ -187,7 +197,7 @@ public class BaseMongoDao {
         }
     }
 
-    public <Q> boolean updateByFeild(Q record, String field) {
+    public <Q> boolean updateByFeild(Q record, String field, Map<String, Object>... additional) {
         try {
             changeCollection(record.getClass());
         } catch (Throwable throwable) {
@@ -196,6 +206,9 @@ public class BaseMongoDao {
             return false;
         }
         Map<String, Object> cond = MapUtil.parseEntity(record);
+        if (additional != null && additional.length > 0) {
+            cond.putAll(additional[0]);
+        }
         BasicDBObject update = new BasicDBObject("$set", cond);
         BasicDBObject query = new BasicDBObject(field, cond.get(field));
         thisCollection().updateOne(query, update);
