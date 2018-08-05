@@ -13,8 +13,7 @@ import java.util.Map;
  */
 public class MapUtil {
 
-
-    public static final <Q> Map<String, Object> parseEntity(Q record, String... strings) {
+    public static <Q> Map<String, Object> parseEntity(Q record, String... strings) {
         if (record == null)
             return null;
         String pre = "";
@@ -36,8 +35,7 @@ public class MapUtil {
         return cond;
     }
 
-
-    public static final <Q> Q castToEntity(Map<String, Object> document, Class<Q> target) {
+    public static <Q> Q castToEntity(Map<String, Object> document, Class<Q> target) {
         try {
             Q result = target.newInstance();
             Field[] fields = target.getDeclaredFields();

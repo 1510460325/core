@@ -57,7 +57,7 @@ public class BaseMongoDao {
     private MongoCollection<Document> thisCollection() {
         return mongo.getCollection(collection);
     }
-
+    @SuppressWarnings("unchecked")
     public <Q> List<Q> queryByCondition(BaseQuery<Q> query, String sortName, boolean up, Map<String, Object>... additional) {
         Q record = query.getQuery();
         try {
@@ -68,7 +68,7 @@ public class BaseMongoDao {
             return null;
         }
         BasicDBObject cond = new BasicDBObject(MapUtil.parseEntity(record));
-        if (additional != null && additional.length > 0) {
+        if (additional != null && additional.length > 0 && additional[0] != null) {
             cond.putAll(additional[0]);
         }
         BasicDBObject sort = null;
@@ -82,7 +82,7 @@ public class BaseMongoDao {
                     .skip((query.getStart() - 1) * query.getRows())
                     .limit(query.getRows());
         else
-            findIterable = thisCollection().find(cond);
+            findIterable = thisCollection().find(cond).sort(sort);
         MongoCursor<Document> iterator = findIterable.iterator();
         List<Q> result = new ArrayList<>();
         while (iterator.hasNext()) {
@@ -92,7 +92,7 @@ public class BaseMongoDao {
         iterator.close();
         return result;
     }
-
+    @SuppressWarnings("unchecked")
     public <Q> Integer queryCoditionCount(BaseQuery<Q> query, Map<String, Object>... additional) {
         Q record = query.getQuery();
         try {
@@ -103,12 +103,12 @@ public class BaseMongoDao {
             return null;
         }
         BasicDBObject cond = new BasicDBObject(MapUtil.parseEntity(record));
-        if (additional != null && additional.length > 0) {
+        if (additional != null && additional.length > 0 && additional[0] != null) {
             cond.putAll(additional[0]);
         }
         return (int) thisCollection().countDocuments(cond);
     }
-
+    @SuppressWarnings("unchecked")
     public <Q> boolean insertOne(Q record, Map<String, Object>... additional) {
         try {
             changeCollection(record.getClass());
@@ -118,7 +118,7 @@ public class BaseMongoDao {
             return false;
         }
         BasicDBObject cond = new BasicDBObject(MapUtil.parseEntity(record));
-        if (additional != null && additional.length > 0) {
+        if (additional != null && additional.length > 0 && additional[0] != null) {
             cond.putAll(additional[0]);
         }
         try {
@@ -152,7 +152,7 @@ public class BaseMongoDao {
             return false;
         }
     }
-
+    @SuppressWarnings("unchecked")
     public <Q> boolean delete(Q record, boolean onlyOne, Map<String, Object>... additional) {
         try {
             changeCollection(record.getClass());
@@ -163,7 +163,7 @@ public class BaseMongoDao {
         }
         try {
             BasicDBObject cond = new BasicDBObject(MapUtil.parseEntity(record));
-            if (additional != null && additional.length > 0) {
+            if (additional != null && additional.length > 0 && additional[0] != null) {
                 cond.putAll(additional[0]);
             }
             if (onlyOne)
@@ -196,7 +196,7 @@ public class BaseMongoDao {
             return false;
         }
     }
-
+    @SuppressWarnings("unchecked")
     public <Q> boolean updateByFeild(Q record, String field, Map<String, Object>... additional) {
         try {
             changeCollection(record.getClass());
@@ -206,7 +206,7 @@ public class BaseMongoDao {
             return false;
         }
         Map<String, Object> cond = MapUtil.parseEntity(record);
-        if (additional != null && additional.length > 0) {
+        if (additional != null && additional.length > 0 && additional[0] != null) {
             cond.putAll(additional[0]);
         }
         BasicDBObject update = new BasicDBObject("$set", cond);
