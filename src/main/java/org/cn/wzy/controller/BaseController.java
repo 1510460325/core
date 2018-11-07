@@ -10,44 +10,49 @@ import javax.servlet.http.HttpServletResponse;
 
 @Log4j
 public class BaseController {
-    protected static final ThreadLocal<HttpServletRequest> requests = new ThreadLocal();
-    protected static final ThreadLocal<HttpServletResponse> responses = new ThreadLocal();
+  protected static final ThreadLocal<HttpServletRequest> requests = new ThreadLocal();
+  protected static final ThreadLocal<HttpServletResponse> responses = new ThreadLocal();
 
-    @ModelAttribute
-    public void init(HttpServletRequest request, HttpServletResponse response) {
-        this.requests.set(request);
-        this.responses.set(response);
-    }
+  @ModelAttribute
+  public void init(HttpServletRequest request, HttpServletResponse response) {
+    this.requests.set(request);
+    this.responses.set(response);
+  }
 
-    public HttpServletRequest getRequest() {
-        return requests.get();
-    }
+  public HttpServletRequest getRequest() {
+    return requests.get();
+  }
 
-    public HttpServletResponse getResponse() {
-        return responses.get();
-    }
+  public HttpServletResponse getResponse() {
+    return responses.get();
+  }
 
-    public Object getSessionValue(String key) {
-        return getRequest().getSession().getAttribute(key);
-    }
+  public void setSessionValue(String key, Object value) {
+    getRequest().getSession().setAttribute(key, value);
+  }
 
-    public String getRemoteAddr() {
-        return getRequest().getRemoteAddr();
-    }
+  public Object getSessionValue(String key) {
+    return getRequest().getSession().getAttribute(key);
+  }
 
-    public void save(String key, Object value) {
-        getRequest().setAttribute(key, value);
-    }
+  public String getRemoteAddr() {
+    return getRequest().getRemoteAddr();
+  }
 
-    public Object ValueOfClaims(String key) {
-        Claims claims = (Claims) getRequest().getAttribute("claims");
-        if (claims == null || claims.get(key) == null)
-            return null;
-        else
-            return claims.get(key);
-    }
+  public void set(String key, Object value) {
+    getRequest().setAttribute(key, value);
+  }
 
-    public Object getValue(String key) {
-        return getRequest().getAttribute(key);
-    }
+  public Object get(String key) {
+    return getRequest().getAttribute(key);
+  }
+
+  public Object getClaimsValue(String key) {
+    Claims claims = (Claims) getRequest().getAttribute("claims");
+    if (claims == null || claims.get(key) == null)
+      return null;
+    else
+      return claims.get(key);
+  }
+
 }

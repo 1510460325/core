@@ -10,6 +10,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * on 2018/6/14 15:41
  * 不短不长八字刚好
  */
-public class StreamsUtil {
+public class FileUtils extends org.apache.commons.io.FileUtils{
 
     public static final void write(InputStream inputStream, OutputStream outputStream, boolean close) throws IOException {
         byte[] by = new byte[1024];
@@ -32,6 +33,34 @@ public class StreamsUtil {
         }
     }
 
+    public static final List<String> read(InputStream inputStream,String charsetName) {
+        InputStreamReader isr = null;
+        try {
+            isr = new InputStreamReader(inputStream,charsetName);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
+        }
+        BufferedReader reader = new BufferedReader(isr);
+        String str;
+        List<String> rs = new ArrayList<>();
+        try {
+            while ((str = reader.readLine()) != null) {
+                rs.add(str);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                reader.close();
+                isr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return rs;
+    }
 
     public static final List<FileItem> getFileList(HttpServletRequest request, String tempPath) throws FileUploadException {
         File tmpFile = new File(tempPath);

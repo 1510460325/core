@@ -38,22 +38,8 @@ public class TokenUtil {
         return builder.compact();
     }
 
-
-    private static Claims absParse(String jsonWebToken) {
-        String secretKey = StringValue("secretKey");
-        try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(jsonWebToken).getBody();
-            return claims;
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-
     public static Object tokenValueOf(String token, String key) {
-        Claims claims = absParse(token);
+        Claims claims = parse(token);
         if (claims == null || claims.get(key) == null)
             return null;
         return claims.get(key);

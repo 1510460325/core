@@ -1,6 +1,5 @@
 package org.cn.wzy.dao.impl;
 
-
 import com.mongodb.*;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -9,11 +8,12 @@ import com.mongodb.client.MongoDatabase;
 import lombok.extern.log4j.Log4j;
 import org.bson.Document;
 import org.cn.wzy.annotation.MGColName;
+import org.cn.wzy.annotation.MGKey;
 import org.cn.wzy.query.BaseQuery;
 import org.cn.wzy.util.MapUtil;
 import org.cn.wzy.util.PropertiesUtil;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,31 +58,29 @@ public class BaseMongoDao {
         return mongo.getCollection(collection);
     }
     @SuppressWarnings("unchecked")
-    public <Q> List<Q> queryByCondition(BaseQuery<Q> query, String sortName, boolean up, Map<String, Object>... additional) {
+    public <Q> List<Q> queryByCondition(BaseQuery<Q> query, BasicDBObject sort, Map<String, Object>... additional) {
         Q record = query.getQuery();
         try {
             changeCollection(record.getClass());
         } catch (Throwable throwable) {
             throwable.printStackTrace();
-            log.info("queryByCondition方法报错:param" + query + "," + sortName + "," + up  + "," + additional);
+            log.info("queryByCondition方法报错:param" + query + "," + sort.toJson());
             return null;
         }
         BasicDBObject cond = new BasicDBObject(MapUtil.parseEntity(record));
         if (additional != null && additional.length > 0 && additional[0] != null) {
             cond.putAll(additional[0]);
         }
-        BasicDBObject sort = null;
-        if (sortName != null && !sortName.trim().equals("")) {
-            sort = new BasicDBObject(sortName, up ? 1 : -1);
-        }
         FindIterable<Document> findIterable;
-        if (query.getStart() != null && query.getRows() != null)
+        if (query.getStart() != null && query.getRows() != null) {
             findIterable = thisCollection().find(cond)
-                    .sort(sort)
-                    .skip((query.getStart() - 1) * query.getRows())
-                    .limit(query.getRows());
-        else
+              .sort(sort)
+              .skip((query.getStart() - 1) * query.getRows())
+              .limit(query.getRows());
+        }
+        else {
             findIterable = thisCollection().find(cond).sort(sort);
+        }
         MongoCursor<Document> iterator = findIterable.iterator();
         List<Q> result = new ArrayList<>();
         while (iterator.hasNext()) {
@@ -197,35 +195,51 @@ public class BaseMongoDao {
         }
     }
     @SuppressWarnings("unchecked")
-    public <Q> boolean updateByFeild(Q record, String field, Map<String, Object>... additional) {
+    public <Q> boolean updateByFeild(Q record, Map<String, Object>... additional) {
         try {
             changeCollection(record.getClass());
         } catch (Throwable throwable) {
             throwable.printStackTrace();
-            log.info("updateByFeild报错:param" + record + "," + field);
+            log.info("updateByFeild报错:param" + record);
+            return false;
+        }
+        String field = null;
+        try {
+            field = getKey(record.getClass());
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            log.info("updateByFeild报错:param" + record);
             return false;
         }
         Map<String, Object> cond = MapUtil.parseEntity(record);
         if (additional != null && additional.length > 0 && additional[0] != null) {
             cond.putAll(additional[0]);
         }
+
         BasicDBObject update = new BasicDBObject("$set", cond);
         BasicDBObject query = new BasicDBObject(field, cond.get(field));
         thisCollection().updateOne(query, update);
         return true;
     }
 
-
     private void changeCollection(Class clazz) throws Throwable {
         MGColName mgColName = (MGColName) clazz.getAnnotation(MGColName.class);
         if (mgColName == null) {
             throw new Throwable("The entity must map a mongodb collection");
         }
-        Method colName = mgColName.annotationType().getDeclaredMethod("value");
-        String name = (String) colName.invoke(mgColName);
+        String name =mgColName.value();
         if (name.trim().equals("")) {
-            throw new Throwable("mongodb collection must not be null");
+            throw new Throwable("mongodb collection must not be null!");
         }
         this.collection = name;
+    }
+
+    private String getKey(Class clazz) throws Throwable {
+        for (Field field: clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(MGKey.class)) {
+                return field.getName();
+            }
+        }
+        throw new Throwable("you must choose a key");
     }
 }

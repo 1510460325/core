@@ -20,7 +20,6 @@ public class MapperingGenerator {
     public static void run() {
         File oldPathFile = new File(oldPath);
         File[] files = oldPathFile.listFiles();
-        int count = 0;
         for (File file : files) {
             if (file.isDirectory()) {
                 continue;
@@ -53,7 +52,7 @@ public class MapperingGenerator {
                 "<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\" >\n" +
                 "<mapper namespace=\"%s\" > \n", model.getNamespace());
         //生成selectBYCondition语句
-        print.printf("  <select id=\"selectByCondition\" parameterType=\"org.cn.wzy.query.BaseQuery\" resultMap=\"%s\"> \n", resultMap);
+        print.printf("  <select id=\"selectByCondition\" parameterType=\"BaseQuery\" resultMap=\"%s\"> \n", resultMap);
         print.printf("      SELECT\n");
         print.printf("      <include refid=\"Base_Column_List\"/>\n");
         if (model.isBlob()) {
@@ -66,7 +65,7 @@ public class MapperingGenerator {
         print.printf("      <include refid=\"limit\" />\n");
         print.printf("  </select>\n");
         //生成selectCountByCondition语句
-        print.printf("  <select id=\"selectCountByCondition\" parameterType=\"org.cn.wzy.query.BaseQuery\" resultType=\"java.lang.Integer\"> \n");
+        print.printf("  <select id=\"selectCountByCondition\" parameterType=\"BaseQuery\" resultType=\"java.lang.Integer\"> \n");
         print.printf("      SELECT\n");
         print.printf("      COUNT(*)\n");
         print.printf("      FROM %s\n", model.getTableName());

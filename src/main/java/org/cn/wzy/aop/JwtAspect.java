@@ -23,17 +23,11 @@ public class JwtAspect {
         try {
             claims = TokenUtil.parse(token);
         } catch (ExpiredJwtException e) {
-            return new ResultModel().builder().code("JWT EXPIRE").build();
-        } catch (MalformedJwtException e) {
-            return new ResultModel().builder().code("JWT WRONG").build();
-        } catch (UnsupportedJwtException e) {
-            return new ResultModel().builder().code("JWT WRONG").build();
-        } catch (SignatureException e) {
-            return new ResultModel().builder().code("JWT WRONG").build();
-        } catch (IllegalArgumentException e) {
-            return new ResultModel().builder().code("JWT WRONG").build();
+            return ResultModel.builder().code("JWT EXPIRE").build();
+        } catch (Exception e) {
+            return ResultModel.builder().code("JWT WRONG").build();
         }
-        controller.save("claims", claims);
+        controller.set("claims", claims);
         return joinPoint.proceed();
     }
 }

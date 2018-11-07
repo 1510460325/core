@@ -121,7 +121,7 @@ public class DaoAndEntityGenerator {
         printWriter.print(packagePreName.replaceAll("package", "import") + "entity." + entity + ";\n");
         printWriter.print(packagePreName.replaceAll("package", "import") + "dao." + entity + "Dao;\n");
         printWriter.print("");
-        printWriter.print("import org.cn.wzy.dao.impl.BaseDaoImpl;\n" +
+        printWriter.print("import BaseDaoImpl;\n" +
                 "import org.springframework.stereotype.Repository;\n");
         printWriter.print("/**\n" +
                 " * Create by WzyGenerator\n" +
@@ -147,7 +147,7 @@ public class DaoAndEntityGenerator {
         PrintWriter printWriter = new PrintWriter(file);
         printWriter.print(packageName + "\n");
         printWriter.print(packagePreName.replaceAll("package", "import") + "." + entity + ";\n");
-        printWriter.print("import org.cn.wzy.dao.BaseDao;\n");
+        printWriter.print("import BaseDao;\n");
         printWriter.print("/**\n" +
                 " * Create by WzyGenerator\n" +
                 " * on " + new Date() + "\n" +

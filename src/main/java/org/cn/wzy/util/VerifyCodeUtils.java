@@ -189,6 +189,7 @@ public class VerifyCodeUtils {
         BASE64Encoder encoder = new BASE64Encoder();
         ImgResult rs = new ImgResult();
         String code = generateVerifyCode(size).toLowerCase();
+        rs.setOriginal(code);
         rs.setCode(encoder.encode(code.getBytes()));
         ByteArrayOutputStream data = new ByteArrayOutputStream();
         outputImage(w, h, data, code);
@@ -202,5 +203,6 @@ public class VerifyCodeUtils {
     public static class ImgResult {
         String img;
         String code;
+        String original;
     }
 }
